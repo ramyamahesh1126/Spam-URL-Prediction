@@ -1,0 +1,10 @@
+uvicorn
+fastapi
+sklearn
+pandas
+numpy
+tldextract
+parser
+dns
+time
+
