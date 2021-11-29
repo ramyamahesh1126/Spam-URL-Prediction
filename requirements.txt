@@ -4,7 +4,4 @@ sklearn
 pandas
 numpy
 tldextract
-parser
-dns
-time
 

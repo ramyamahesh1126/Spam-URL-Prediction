@@ -1,39 +1,34 @@
-def url_length(column):
-  return pd.Series([len(i) for i in column])
+import tarfile
+import pandas as pd
+import numpy as np
 
-def at_present(column):
-  return pd.Series([ 1 if i.find("@") == -1 else -1 for i in column ])
+#For feature engineering
+import tldextract 
+import urllib.parse as parser
+import dns.resolver as dns
+import time
 
-def dash_present(column):
-  return pd.Series([ 1 if i.find("-") == -1 else -1 for i in column ])
-
-def redirect_present(column):
-  flags = []
-  for i in column:
-    if i.find("https://") != -1 :
-      i.replace("https://","")
-    if i.find("http://") != -1 :
-      i.replace("https://","")
-    if i.find("//") != -1:
-      flags.append(-1)
-    else:
-      flags.append(1)  
-  return pd.Series(flags)
-
-def check_domain_length(column):
-  flags = []
-  for i in column:
-    parsed_url = parser.urlparse(i)
-    # Calculating log to normalize the length and make it comparable to other features
-    # flags.append(np.log(len(parsed_url.netloc)))
-    flags.append(len(parsed_url.netloc))
-  return pd.Series(flags)
-
-def no_of_subdomains(column):
-  flags = []
-  for i in column:
-    parsed_url = tldextract.extract(i)
-    flags.append(len(parsed_url.subdomain.split(".")))
-  return pd.Series(flags)
-
-
+def feature_extraction(url):
+  fields = ["url_length","at_present","dash_present","redirect_present","check_domain_length","no_of_subdomains"]
+  feature_1=len(url)
+  if url.find("@") == -1:
+    feature_2 = 1
+  else:
+    feature_2 = -1
+  if url.find("-") == -1:
+    feature_3 = 1
+  else:
+    feature_3 = -1
+  if url.find("https://") != -1 :
+    url.replace("https://","")
+  if url.find("http://") != -1 :
+    url.replace("https://","")
+  if url.find("//") != -1:
+    feature_4 = -1
+  else:
+    feature_4 = 1
+  parsed_url = parser.urlparse(url)
+  feature_5=len(parsed_url.netloc)
+  parsed_url = tldextract.extract(url)
+  feature_6=len(parsed_url.subdomain.split("."))
+  return pd.DataFrame([[feature_1,feature_2,feature_3,feature_4,feature_5,feature_6]],columns=fields)
